@@ -1,65 +1,99 @@
-import { useState } from 'react';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { RotatingLines } from 'react-loader-spinner';
+import {
+  useAddContactMutation,
+  useFetchContactsQuery,
+} from 'redux/contactsSlice';
+import { useEffect } from 'react';
+
+import { notifyAddContact, serverError } from '../Utils/Notification';
 import css from './ContactForm.module.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectFilteredContacts } from 'redux/contacts/contactsSelectors';
-import { addContact } from 'redux/contacts/contactsOperation';
 
 const ContactForm = () => {
-  const dispatch = useDispatch();
+  const [addContact, { isLoading, isSuccess, isError }] =
+    useAddContactMutation();
+  const { data: contacts } = useFetchContactsQuery();
 
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-
-  const contacts = useSelector(selectFilteredContacts);
-
-  const handleSubmit = e => {
-    e.preventDefault();
-
-    const isContactExist = contacts.find(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
-    );
-    if (isContactExist) {
-      alert(`User with name ${name} is already in contacts`);
-      return;
+  useEffect(() => {
+    if (isSuccess) {
+      notifyAddContact();
     }
+  }, [isSuccess]);
 
-    dispatch(addContact({ name, number }));
-    setName('');
-    setNumber('');
+  useEffect(() => {
+    if (isError) {
+      serverError();
+    }
+  }, [isError]);
+
+  const handleSubmit = (values, { resetForm }) => {
+    const name = values.name;
+    const number = values.phone;
+    contacts.find(
+      contact => contact.name.toLowerCase() === values.name.toLowerCase()
+    )
+      ? alert(`${values.name} is already in contacts!`)
+      : addContact({ name, number }) && resetForm();
+  };
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(2, 'Too Short!')
+      .max(20, 'Too Long!')
+      .required('Name is required field'),
+
+    phone: Yup.number()
+      .typeError('That does not look like a phone number')
+      .positive("A phone number can't start with a minus")
+      .integer("A phone number can't include a decimal point")
+      .required('A phone number is required'),
+  });
+
+  const initialValues = {
+    name: '',
+    phone: '',
   };
 
   return (
-    <form className={css.container} onSubmit={handleSubmit}>
-      <label className={css.item}>
-        <div className={css.wrap}>Name</div>
-        <input
-          type="text"
-          className={css.input}
-          name="name"
-          value={name}
-          pattern="^[А-Яа-яЁёa-zA-Z\s]+$"
-          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-          required
-          onChange={e => setName(e.target.value)}
-        />
-      </label>
-      <label className={css.item}>
-        <div className={css.wrap}>Number</div>
-        <input
-          type="tel"
-          name="number"
-          className={css.input}
-          value={number}
-          pattern="\+?[0-9\s\-\(\)]+"
-          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          required
-          onChange={e => setNumber(e.target.value)}
-        />
-      </label>
-      <button className={css.button} type="submit">
-        Add contact
-      </button>
-    </form>
+    <>
+      <ToastContainer autoClose={1500} position="top-right" />
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        <Form className={css.form}>
+          <label className={css.label}>
+            Name
+            <Field
+              className={css.input}
+              type="text"
+              name="name"
+              placeholder="Name"
+            />
+            <ErrorMessage className={css.error} name="name" component="div" />
+          </label>
+          <label className={css.label}>
+            Number
+            <Field
+              className={css.input}
+              type="tel"
+              name="phone"
+              placeholder="phone"
+            />
+            <ErrorMessage className={css.error} name="phone" component="div" />
+          </label>
+          <button className={css.btn} disabled={isLoading} type="submit">
+            {isLoading && <RotatingLines height="20" width="20" />}
+            Add contact
+          </button>
+        </Form>
+      </Formik>
+    </>
   );
 };
 

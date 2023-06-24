@@ -1,18 +1,33 @@
 import { useSelector } from 'react-redux';
-import { selectFilteredContacts } from 'redux/contacts/contactsSelectors';
+
 import css from './ContactList.module.css';
-import ContactItem from 'components/ContactItem/ContactItem';
+import ContactItem from '../ContactItem/ContactItem';
+import { getFilteredContacts } from 'redux/selectors';
 
-export const ContactList = () => {
-  const contacts = useSelector(selectFilteredContacts);
+import { useFetchContactsQuery } from 'redux/contactsSlice';
+import { getFilter } from 'redux/selectors';
 
+const ContactList = () => {
+  const filter = useSelector(getFilter);
+
+  const { data: contacts, isLoading, error } = useFetchContactsQuery();
   return (
-    <ul className={css.container}>
-      {contacts.map(contact => (
-        <li className={css.item} key={contact.id}>
-          <ContactItem contact={contact} />
-        </li>
-      ))}
-    </ul>
+    <>
+      {isLoading && <p className={css.default}>...loading</p>}
+      {error && (
+        <p className={css.default}>
+          Sorry, something went wrong, please try again later!
+        </p>
+      )}
+      {contacts && contacts.length === 0 && <p>There is no contact!</p>}
+      <ul className={css.contactList}>
+        {contacts &&
+          getFilteredContacts(contacts, filter).map(({ id, name, number }) => (
+            <ContactItem key={id} name={name} number={number} id={id} />
+          ))}
+      </ul>
+    </>
   );
 };
+
+export default ContactList;

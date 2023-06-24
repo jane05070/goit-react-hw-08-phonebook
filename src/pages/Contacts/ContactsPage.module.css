@@ -1,0 +1,15 @@
+.wrapper {
+    margin: 0 auto;
+}
+
+.titleCont {
+    padding: 10px 0;
+    font-size: 30px;
+    text-align: center;
+}
+
+.content__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}

@@ -1,0 +1,9 @@
+.wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.titlePhone {
+    padding: 10px 0;
+    text-align: center;
+}

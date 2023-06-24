@@ -1,35 +1,67 @@
-import ContactForm from 'components/ContactForm/ContactForm';
+import { Route, Routes } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { useSelector } from 'react-redux';
+
+import { getToken } from 'redux/selectors';
+import AppBar from 'components/AppBar';
+import { RestrictedRoute } from 'components/RestrictedRoute';
+import { PrivatRoute } from 'components/PrivatRoute';
+import { useGetCurrentQuery } from 'redux/userApi';
+
 import css from './App.module.css';
-import Filter from 'components/Filter/Filter';
 
-import { ContactList } from 'components/ContactList/ContactList';
-import { selectError, selectIsLoading } from 'redux/contacts/contactsSelectors';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchContacts } from 'redux/contacts/contactsOperation';
+const HomePage = lazy(() => import('pages/Home/HomePage'));
+const LoginPage = lazy(() => import('pages/Login/LoginPage'));
+const RegisterPage = lazy(() => import('pages/Register/RegisterPage'));
+const AddPage = lazy(() => import('../../pages/Add/AddPage'));
+const ContactsPage = lazy(() => import('pages/Contacts/ContactsPage'));
+const NotFoundPage = lazy(() => import('pages/NotFound/NotFoundPage'));
 
-export const App = () => {
-  const dispatch = useDispatch();
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
+const App = () => {
+  const token = useSelector(getToken);
 
-  useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
+  const { isLoading } = useGetCurrentQuery(undefined, {
+    skip: !token,
+  });
 
   return (
-    <div className={css.container}>
-      <div className={css.section}>
-        <h1 className={css.title}>Phonebook</h1>
-        <ContactForm />
-      </div>
-      <div className={css.section}>
-        <h2 className={css.subtitle}>Contacts</h2>
-        <Filter />
-        {isLoading && !error && <b>Request in progress...</b>}
-        {error && error}
-        <ContactList />
-      </div>
-    </div>
+    <>
+      <AppBar />
+      {isLoading ? (
+        <p className={css.default}>...loading</p>
+      ) : (
+        <Suspense fallback={<p className={css.default}>...loading</p>}>
+          <Routes>
+            <Route path="/" element={<HomePage />}></Route>
+            <Route
+              path="/register"
+              element={
+                <RestrictedRoute
+                  component={RegisterPage}
+                  redirectTo="/contacts"
+                />
+              }
+            ></Route>
+            <Route
+              path="/login"
+              element={
+                <RestrictedRoute component={LoginPage} redirectTo="/contacts" />
+              }
+            ></Route>
+            <Route
+              path="/add"
+              element={<PrivatRoute component={AddPage} redirectTo="/" />}
+            ></Route>
+            <Route
+              path="/contacts"
+              element={<PrivatRoute component={ContactsPage} redirectTo="/" />}
+            ></Route>
+            <Route path="*" element={<NotFoundPage />}></Route>
+          </Routes>
+        </Suspense>
+      )}
+    </>
   );
 };
+
+export default App;

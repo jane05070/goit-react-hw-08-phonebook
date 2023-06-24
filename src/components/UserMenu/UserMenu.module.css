@@ -1,0 +1,29 @@
+.userMenu__wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.userMenu__text {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.userMenu__btn {
+    display: inline-block;
+    text-decoration: none;
+    padding: 10px 25px;
+    font-size: 22px;
+    font-weight: 500;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    color: black;
+    background-color: #3f51b5;
+}
+
+.userMenu__btn:hover {
+    background-color: #3f51b5;
+}

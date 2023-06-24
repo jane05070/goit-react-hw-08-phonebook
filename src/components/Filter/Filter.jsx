@@ -1,32 +1,34 @@
-import { selectFilter } from 'redux/filters/filterSeletors';
+import { useDispatch, useSelector } from 'react-redux';
+import { DebounceInput } from 'react-debounce-input';
+
+import { setFilter } from 'redux/filterSlice';
+import { getFilter } from 'redux/selectors';
 import css from './Filter.module.css';
-import { useSelector, useDispatch } from 'react-redux';
-import { setFilter } from 'redux/filters/filtersSlice';
 
 const Filter = () => {
   const dispatch = useDispatch();
-
-  const onSetFilter = payload => {
+  const filter = useSelector(getFilter);
+  const valueFilter = payload => {
     dispatch(setFilter(payload));
   };
 
-  const updateFilter = event => {
-    onSetFilter(event.target.value);
+  const changeFilter = e => {
+    valueFilter(e.target.value);
   };
 
-  const filter = useSelector(selectFilter);
   return (
-    <>
-      <label className={css.title}>
-        Find contacts by name
-        <input
-          className={css.input}
-          type="text"
-          value={filter}
-          onChange={updateFilter}
-        />
-      </label>
-    </>
+    <label className={css.label}>
+      Find contacts by name
+      <DebounceInput
+        minLength={1}
+        debounceTimeout={300}
+        className={css.input}
+        type="text"
+        value={filter}
+        placeholder="Search"
+        onChange={changeFilter}
+      />
+    </label>
   );
 };
 
