@@ -4,7 +4,7 @@ export const loginError = () => toast.error('Sorry, wrong email or password!');
 
 export const registerError = () =>
   toast.error(
-    'Sorry, incorrect data entered! check the password, it must be longer than 7 characters'
+    'Sorry, incorrect data entered! check the password and email, it must be longer than 7 characters'
   );
 
 export const serverError = () =>

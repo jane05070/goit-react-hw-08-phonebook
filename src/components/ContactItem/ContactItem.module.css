@@ -1,15 +1,49 @@
-.button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  width: 100px;
-  margin: 0 10px;
-  color: rgb(255, 255, 255);
-  background-color: #3f51b5;
-  cursor: pointer;
-  font-size: 20px;
+.contactItem {
+  display: flex;
+  margin-top: 5px;
+  font-weight: bold;
+  list-style: none;
+  border-bottom: 1px solid grey;
 }
 
-.button:hover {
+.contact__wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contact__name {
+  margin-right: 10px;
+}
+
+.btn__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: auto;
+}
+
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  margin-left: 5px;
+  padding: 10px 25px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 5px;
+  width: 100px;
+  height: 35px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease 0s;
+  color: black;
   background-color: #3f51b5;
 }
+
+.btn:hover,
+.btn:focus {
+  background-color: #3f51b5;
+}
+
+
