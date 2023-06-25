@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkgoit_react_hw_08_phonebook=self.webpackChunkgoit_react_hw_08_phonebook||[]).push([[591],{591:function(e,o,t){t.r(o),t.d(o,{default:function(){return r}});var a="HomePage_wrapper__v-mkr",n=t(3329),r=function(){return(0,n.jsxs)("div",{className:a,children:[(0,n.jsx)("h1",{children:"Welcome to your Phonebook!"}),(0,n.jsx)("p",{children:"Welcome to Phone Book, this application will allow you to store private data and manage it with ease"})]})}}}]);
+//# sourceMappingURL=591.5e63f4a4.chunk.js.map
